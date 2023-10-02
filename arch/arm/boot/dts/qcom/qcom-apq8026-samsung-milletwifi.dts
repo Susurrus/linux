@@ -23,26 +23,8 @@
 	chassis-type = "tablet";
 
 	aliases {
-		display0 = &framebuffer0;
 		mmc0 = &sdhc_1; /* SDC1 eMMC slot */
 		mmc1 = &sdhc_2; /* SDC2 SD card slot */
-	};
-
-	chosen {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges;
-
-		stdout-path = "display0";
-
-		framebuffer0: framebuffer@3200000 {
-			compatible = "simple-framebuffer";
-			reg = <0x03200000 0x800000>;
-			width = <800>;
-			height = <1280>;
-			stride = <(800 * 3)>;
-			format = "r8g8b8";
-		};
 	};
 
 	gpio-hall-sensor {
@@ -130,6 +112,19 @@
 				rom-val = /bits/ 8 <0xfa>;
 			};
 		};
+	};
+
+	reg_panel_3p3v: regulator-panel-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "panel_3p3v";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+
+		gpio = <&pm8226_gpios 2 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&panel_3p3v_default_state>;
 	};
 
 	reg_backlight_vddio: regulator-backlight-vddio {
@@ -308,6 +303,34 @@
 		pinctrl-0 = <&tsp_int_rst_default_state>;
 		pinctrl-names = "default";
 	};
+};
+
+&mdss {
+	status = "okay";
+};
+
+&mdss_dsi0 {
+	vddio-supply = <&pm8226_l8>;
+	vdda-supply = <&pm8226_l4>;
+
+	panel@0 {
+		compatible = "samsung,milletwifi-panel-s6d7aa0";
+		reg = <0>;
+
+		reset-gpios = <&tlmm 25 GPIO_ACTIVE_LOW>;
+		vdd-supply = <&reg_panel_3p3v>;
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&mdss_dsi0_out>;
+			};
+		};
+	};
+};
+
+&mdss_dsi0_out {
+	data-lanes = <0 1 2 3>;
+	remote-endpoint = <&panel_in>;
 };
 
 &modem {
@@ -554,6 +577,13 @@
 
 	muic_int_default_state: muic-int-default-state {
 		pins = "gpio67";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-disable;
+	};
+
+	panel_3p3v_default_state: panel-3p3v-default-state {
+		pins = "gpio2";
 		function = "gpio";
 		drive-strength = <2>;
 		bias-disable;
