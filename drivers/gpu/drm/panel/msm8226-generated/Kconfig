@@ -1,4 +1,4 @@
-menu "MSM8916 panel drivers generated with linux-mdss-dsi-panel-driver-generator"
+menu "MSM8226 panel drivers generated with linux-mdss-dsi-panel-driver-generator"
 	depends on GPIOLIB && OF && REGULATOR
 	depends on DRM_MIPI_DSI
 
@@ -11,6 +11,10 @@ config DRM_PANEL_HTC_MEMUL_NOVATEK35521
 
 config DRM_PANEL_LG_LENOK_LG4237
 	tristate "Lg LENOK LG4237"
+	default DRM_PANEL_MSM8226_GENERATED
+
+config DRM_PANEL_SAMSUNG_MILLETWIFI_S6D7AA0
+	tristate "Samsung MILLETWIFI S6D7AA0"
 	default DRM_PANEL_MSM8226_GENERATED
 
 endmenu
