@@ -272,6 +272,7 @@
 		pinctrl-names = "default";
 
 		summit,enable-usb-charging;
+		summit,enable-otg-charging;
 		summit,enable-charge-control = <SMB3XX_CHG_ENABLE_SW>;
 		summit,fast-voltage-threshold-microvolt = <3000000>;
 		summit,chip-temperature-threshold-celsius = <130>;
